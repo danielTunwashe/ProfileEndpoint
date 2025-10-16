@@ -16,6 +16,10 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services.AddHttpClient();
 
+// Bind to Railway's dynamic PORT
+builder.WebHost.UseUrls($"http://0.0.0.0:{Environment.GetEnvironmentVariable("PORT")}");
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
