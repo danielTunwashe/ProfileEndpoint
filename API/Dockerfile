@@ -1,19 +1,13 @@
-# Stage 1: Build
+# Use the official .NET 8 SDK image for building
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet publish -c Release -o /app/publish
+
+# Use a smaller runtime image for hosting
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-
-# Copy solution and restore dependencies
-COPY *.sln .
-COPY src/ ./src/
-WORKDIR /app/src/Presentation
-
-RUN dotnet restore
-RUN dotnet publish -c Release -o /out
-
-# Stage 2: Run
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /out .
-
+COPY --from=build /app/publish .
+ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "API.dll"]
