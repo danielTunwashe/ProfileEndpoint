@@ -2,12 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy the solution and project files
-COPY ../Application ./Application
-COPY ../Domain ./Domain
-COPY ../Infrastructure ./Infrastructure
-COPY . ./API
+# Copy everything into the container
+COPY . .
 
+# Restore, build, and publish the API project
 WORKDIR /src/API
 RUN dotnet restore API.csproj
 RUN dotnet publish -c Release -o /app/publish
